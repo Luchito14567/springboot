@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Usuarios</title>
+</head>
+<body>
+    <h1>Usuarios</h1>
+
+    <div>
+        <input type="text" id="userId" placeholder="ID eliminar">
+
+        <button onclick="deleteUser()">Eliminar</button>
+    </div>
+
+
+    <script>
+      
+        async function deleteUser() {
+            const id = document.getElementById("userId").value;
+            
+            
+            await fetch( `http://localhost:8080/api/users/${id}`, {method: "DELETE"} )
+            
+            alert("Usuario eliminado")
+        }
+    </script>
+</body>
+</html>

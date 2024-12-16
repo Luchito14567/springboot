@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket CRUD</title>
+</head>
+<body>
+    <h1>WebSocket CRUD</h1>
+
+    <!-- Formulario para crear/actualizar tarea -->
+    <div>
+        <input type="text" id="taskName" placeholder="Nombre de la tarea">
+        <input type="text" id="taskId" placeholder="ID (para actualizar o eliminar)">
+        <button onclick="createTask()">Crear</button>
+        <button onclick="updateTask()">Actualizar</button>
+    </div>
+
+    <!-- Botones para leer/eliminar -->
+    <div>
+        <button onclick="readTasks()">Leer Tareas</button>
+        <button onclick="deleteTask()">Eliminar</button>
+    </div>
+
+    <!-- Mostrar mensajes -->
+    <div id="messages"></div>
+
+    <script>
+        const socket = new WebSocket("ws://localhost:8080/ws");
+
+        socket.onopen = () => {
+            console.log("Conexión abierta con el servidor WebSocket");
+        };
+
+        socket.onmessage = (event) => {
+            const message = JSON.parse(event.data);
+            console.log("Respuesta del servidor:", message);
+            document.getElementById("messages").innerText = JSON.stringify(message, null, 2);
+        };
+
+        socket.onerror = (error) => {
+            console.error("Error en WebSocket:", error);
+        };
+
+        socket.onclose = () => {
+            console.log("Conexión cerrada");
+        };
+
+        function createTask() {
+            const name = document.getElementById("taskName").value;
+            socket.send(JSON.stringify({ action: "create", name }));
+        }
+
+        function readTasks() {
+            socket.send(JSON.stringify({ action: "read" }));
+        }
+
+        function updateTask() {
+            const id = document.getElementById("taskId").value;
+            const name = document.getElementById("taskName").value;
+            socket.send(JSON.stringify({ action: "update", id, name }));
+        }
+
+        function deleteTask() {
+            const id = document.getElementById("taskId").value;
+            socket.send(JSON.stringify({ action: "delete", id }));
+        }
+    </script>
+</body>
+</html>
